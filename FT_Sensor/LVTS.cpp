@@ -22,6 +22,48 @@
  */
 
 #include "LVTS.h"
+#include "ValueAvgInt.h" 
+#include "Arduino.h"
+
+LVTS::LVTS(int pin, LVTS_Type type)
+{
+    this->pin  = pin;
+    this->type = type;
+}
+
+
+bool LVTS::getTemperature(double* value)
+{
+    //Get some values
+    ValueAvgInt filter;
+    filter.init();
+    for(int i=0; i<10; i++)
+    {
+        filter.addValue(analogRead(pin));
+    }
+
+    bool ok;
+    switch ( type )
+    {
+        case LVTS_LM34:
+            *value = lm34(filter.getValue(), &ok);
+            break;
+        case LVTS_LM35:
+            *value = lm35(filter.getValue(), &ok);
+            break;
+        default :
+            return false;
+            break;
+    }
+
+    if(!ok)
+    {
+        *value = 0.0;
+        return false;
+    }
+
+    return true;
+}
 
 /**
  * LM35 temperature sensor.

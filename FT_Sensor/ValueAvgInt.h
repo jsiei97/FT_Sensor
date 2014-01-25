@@ -1,7 +1,7 @@
 /**
- * @file LVTS.h
+ * @file ValueAvg.h
  * @author Johan Simonsson
- * @brief Low Voltage Temperature Sensor Class
+ * @brief A basic filter
  */
 
 /*
@@ -21,28 +21,24 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __LVTS_H
-#define  __LVTS_H
+#ifndef  __VALUEAVG_H
+#define  __VALUEAVG_H
 
-typedef enum
-{
-    LVTS_LM34 = 0,
-    LVTS_LM35
-} LVTS_Type;
-
-
-class LVTS
+class ValueAvgInt
 {
     private:
-        int pin;
-        LVTS_Type type;
+        bool firstTime;
+        int higest;
+        int smallest;
+        int sum;
+        int cnt;
 
-        static double lm34(int reading, bool *ok);
-        static double lm35(int reading, bool *ok);
-        static double F2C(double degC);
     public:
-        LVTS(int pin, LVTS_Type type);
-        bool getTemperature(double* value);
+        ValueAvgInt();
+        void init();
+        void addValue(int data);
+        int getValue();
+
 };
 
-#endif  // __LVTS_H
+#endif  // __VALUEAVG_H
