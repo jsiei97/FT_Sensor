@@ -17,3 +17,10 @@ int analogRead(unsigned int pin)
 {
     return my_local_analog;
 }
+
+
+
+void pinMode(unsigned int pin, unsigned int mode)
+{
+
+}

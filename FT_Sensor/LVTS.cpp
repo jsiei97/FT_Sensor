@@ -28,6 +28,8 @@
 LVTS::LVTS(int pin, LVTS_Type type)
 {
     this->pin  = pin;
+    pinMode(pin, INPUT);
+
     this->type = type;
 }
 
