@@ -1,7 +1,7 @@
 /**
- * @file DS18B20.h
+ * @file hw_DS18B20.ino
  * @author Johan Simonsson
- * @brief OneWire DS18B20 Temperature Sensor Class
+ * @brief Test program for DS18B20
  */
 
 /*
@@ -21,19 +21,28 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __DS18B20_H
-#define  __DS18B20_H
+#include "DS18B20.h"
 
+DS18B20 ds(A0);
 
-class DS18B20
+void setup()
 {
-    private:
-        int pin;
+    Serial.begin(9600);
+    Serial.println("DS18B20 test!");
+}
 
-    public:
-        DS18B20(int pin);
-        bool getTemperature(double* value);
+void loop()
+{
+    double temperature = 0;
 
-};
+    if(!ds.getTemperature(&temperature))
+    {
+        Serial.println("Error: read fail...");
+    }
 
-#endif  // __DS18B20_H
+    Serial.print("Temperature: ");
+    Serial.print(temperature);
+    Serial.println(" *C");
+
+    delay(1000);
+}

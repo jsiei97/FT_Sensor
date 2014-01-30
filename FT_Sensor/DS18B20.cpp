@@ -1,11 +1,11 @@
 /**
  * @file DS18B20.cpp
  * @author Johan Simonsson
- * @brief Reads data from a DS18B20
+ * @brief OneWire DS18B20 Temperature Sensor Class
  */
 
 /*
- * Copyright (C) 2013 Johan Simonsson
+ * Copyright (C) 2014 Johan Simonsson
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,8 +21,15 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "Arduino.h"
 #include "DS18B20.h"
 #include "OneWire.h"
+
+DS18B20::DS18B20(int pin)
+{
+    this->pin  = pin;
+    pinMode(pin, INPUT);
+}
 
 /**
  * Returns a temperature from a OneWire sensor.
@@ -30,10 +37,10 @@
  * that is removed so this function starts a new reading
  * and returns the result from the last reading.
  *
- * @param pin the pin the OneWire but is connected to.
- * @return temperature
+ * @param value[out] Temperature reading
+ * @return true if ok, false if fail.
  */
-double DS18B20::getTemperature(int pin)
+bool DS18B20::getTemperature(double* value)
 {
     OneWire ds(pin);
 
@@ -50,7 +57,7 @@ double DS18B20::getTemperature(int pin)
         //Serial.println();
         ds.reset_search();
         delay(250);
-        return 0;
+        return false;
     }
 
     /*
@@ -153,15 +160,23 @@ double DS18B20::getTemperature(int pin)
     }
     celsius = (float)raw / 16.0;
 
+    //The internal DS18B20 error temperature,
+    //dont return this value!
+    if(celsius == 85.0)
+    {
+        return false;
+    }
+
     //Datasheet tells us
     //-"Measures temperatures from -55°C to +125°C"
     //so if it not in that range... something is wrong!
     if(celsius <= 125 && celsius >= -55)
     {
-        return celsius;
+        *value = celsius;
+        return true;
     }
 
     //The calc above did not go well :(
-    return 0.0;
+    return false;
 }
 
