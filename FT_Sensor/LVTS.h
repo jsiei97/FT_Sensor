@@ -5,7 +5,7 @@
  */
 
 /*
- * Copyright (C) 2013 Johan Simonsson
+ * Copyright (C) 2014 Johan Simonsson
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,9 +40,11 @@ class LVTS
         static double lm34(int reading, bool *ok);
         static double lm35(int reading, bool *ok);
         static double F2C(double degC);
+
     public:
         LVTS(int pin, LVTS_Type type);
         bool getTemperature(double* value);
+
 };
 
 #endif  // __LVTS_H
