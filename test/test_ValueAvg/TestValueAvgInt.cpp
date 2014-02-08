@@ -65,6 +65,9 @@ void TestValueAvgInt::test_ValueAvgInt()
     //5+8+14=27/3=9
     QCOMPARE(9, filter.getValue());
 
+    //No values -> 0
+    filter.init();
+    QCOMPARE(0, filter.getValue());
 }
 
 QTEST_MAIN(TestValueAvgInt)
