@@ -41,11 +41,11 @@ void TestValueAvgInt::test_ValueAvgInt()
     filter.addValue(-2);   //min value
     filter.addValue(400); //max value
 
+    filter.addValue(14);
+    filter.addValue(14);
     filter.addValue(13);
-    filter.addValue(14);
-    filter.addValue(14);
-    filter.addValue(14);
     filter.addValue(15);
+    filter.addValue(14);
 
     //No 2 and 400
     //13+(14*3)+15=70/5=14
