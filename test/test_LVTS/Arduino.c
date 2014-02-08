@@ -15,6 +15,8 @@ unsigned long millis(void)
 unsigned long my_local_analog = 0;
 int analogRead(unsigned int pin)
 {
+    //Remove unused parameter warning
+    pin++;
     return my_local_analog;
 }
 
@@ -22,5 +24,7 @@ int analogRead(unsigned int pin)
 
 void pinMode(unsigned int pin, unsigned int mode)
 {
-
+    //Remove unused parameter warning
+    pin++;
+    mode++;
 }
