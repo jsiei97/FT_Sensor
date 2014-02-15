@@ -33,11 +33,12 @@ DS18B20::DS18B20(int pin)
 
 /**
  * Returns a temperature from a OneWire sensor.
+ *
  * Please note that there is a need for a 750ms delay in the middle
  * that is removed so this function starts a new reading
  * and returns the result from the last reading.
  *
- * @param value[out] Temperature reading
+ * @param[out] value Temperature reading
  * @return true if ok, false if fail.
  */
 bool DS18B20::getTemperature(double* value)

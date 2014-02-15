@@ -1,5 +1,5 @@
 /**
- * @file ValueAvg.h
+ * @file ValueAvgInt.h
  * @author Johan Simonsson
  * @brief A basic filter
  */
