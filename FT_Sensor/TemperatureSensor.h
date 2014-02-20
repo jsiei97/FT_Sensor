@@ -60,6 +60,7 @@ class TemperatureSensor
         bool getTemperature(double* value);
 
         SensorAlarmNumber alarmCheck();
+        //void alarmAck(SensorAlarmNumber num); //Alarm Acknowledgement
 
 };
 
