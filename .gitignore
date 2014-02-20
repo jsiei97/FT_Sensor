@@ -4,6 +4,7 @@ cscope.out
 tags
 
 *.swp
+*.o
 
 #Ignore doxygen
 doxygen/
