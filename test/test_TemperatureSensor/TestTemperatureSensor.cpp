@@ -32,7 +32,7 @@ void TestTemperatureSensor::test_Basic()
         QFAIL("Why still null?");
     if( (sensor[0].lvts) != NULL)
         QFAIL("Why not null?");
-    
+
     if( (sensor[1].lvts) == NULL)
         QFAIL("Why still null?");
     if( (sensor[1].ds) != NULL)
@@ -44,6 +44,7 @@ void TestTemperatureSensor::test_Basic()
         QFAIL("Why not null?");
 
     double value;
+
     my_global_ds18b20 = 18.20;
     QVERIFY( sensor[0].getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
@@ -73,9 +74,28 @@ void TestTemperatureSensor::test_Basic()
     my_global_ds18b20 = 30.00;
     QVERIFY( sensor[0].getTemperature(&value) );
     QCOMPARE( sensor[0].failcnt, (unsigned int)0);
+
+    //No alarms at this point.
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_NO );
+
+    //But let's get a sensor error alarm
+    my_global_ds18b20 = -1.00; //Test value, for bas sensor
+    for( int i=0 ; i<15 ; i++ )
+    {
+        //Read a lot of times.
+        QVERIFY( !sensor[0].getTemperature(&value) );
+    }
+
+    //And now we should have a alarm...
+    QCOMPARE(sensor[0].alarmCheck(), SENSOR_ALARM_SENSOR);
+
+    //Then let's have a correct sensor reading again (no alarm)
+    my_global_ds18b20 = 30.00;
+    QVERIFY( sensor[0].getTemperature(&value) );
+    QCOMPARE( sensor[0].failcnt, (unsigned int)0 );
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_NO );
+    
 }
-
-
 
 
 QTEST_MAIN(TestTemperatureSensor)

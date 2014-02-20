@@ -37,6 +37,7 @@ TemperatureSensor::TemperatureSensor()
     this->type=SENSOR_NONE;
 
     failcnt = 0;
+    valueWork = 0;
 }
 
 TemperatureSensor::~TemperatureSensor()
@@ -90,9 +91,28 @@ bool TemperatureSensor::getTemperature(double* value)
     }
 
     if(ret)
+    {
         failcnt=0;
+        valueWork = *value;
+    }
     else
+    {
         failcnt++;
+    }
 
     return ret;
+}
+
+
+
+SensorAlarmNumber TemperatureSensor::alarmCheck()
+{
+    SensorAlarmNumber num = SENSOR_ALARM_NO;
+
+    if(failcnt>5)
+    {
+        num = SENSOR_ALARM_SENSOR;
+    }
+ 
+    return num;
 }

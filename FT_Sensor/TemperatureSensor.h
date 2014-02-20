@@ -29,14 +29,27 @@
 #include "LVTS.h"
 #include "SensorTypes.h"
 
+
+typedef enum
+{
+    SENSOR_ALARM_NO = 0, ///< No active alarm
+    SENSOR_ALARM_SENSOR, ///< There is a sensor error
+    SENSOR_ALARM_HIGH,   ///< High level alarm
+    SENSOR_ALARM_LOW,    ///< Low level alarm
+} SensorAlarmNumber;
+
+
 class TemperatureSensor
 {
     private:
-        FT_SensorType type;
-        DS18B20* ds;
-        LVTS*    lvts;
+        FT_SensorType type; ///< What kind of sensor is this object?
+        DS18B20* ds;        ///< Ref to DS18B20 if correct type.
+        LVTS*    lvts;      ///< Ref to LVTS if correct type.
 
-        unsigned int failcnt;
+        unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
+
+        //Variables for the value
+        double valueWork;   ///< Active value that we work with right now
 
     public:
         TemperatureSensor();
@@ -45,6 +58,9 @@ class TemperatureSensor
         void init(int pin, FT_SensorType type);
 
         bool getTemperature(double* value);
+
+        SensorAlarmNumber alarmCheck();
+
 };
 
 #endif  // __TEMPERATURESENSOR_H
