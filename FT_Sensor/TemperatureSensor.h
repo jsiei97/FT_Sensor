@@ -1,7 +1,7 @@
 /**
- * @file LVTS.h
+ * @file TemperatureSensor.h
  * @author Johan Simonsson
- * @brief Low Voltage Temperature Sensor Class
+ * @brief A temperature sensor class with alarm logic
  */
 
 /*
@@ -21,25 +21,30 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __LVTS_H
-#define  __LVTS_H
+#ifndef  __TEMPERATURESENSOR_H
+#define  __TEMPERATURESENSOR_H
 
+
+#include "DS18B20.h"
+#include "LVTS.h"
 #include "SensorTypes.h"
 
-class LVTS
+class TemperatureSensor
 {
     private:
-        int pin;
         FT_SensorType type;
+        DS18B20* ds;
+        LVTS*    lvts;
 
-        static double lm34(int reading, bool *ok);
-        static double lm35(int reading, bool *ok);
-        static double F2C(double degC);
+        unsigned int failcnt;
 
     public:
-        LVTS(int pin, FT_SensorType type);
-        bool getTemperature(double* value);
+        TemperatureSensor();
+        ~TemperatureSensor();
 
+        void init(int pin, FT_SensorType type);
+
+        bool getTemperature(double* value);
 };
 
-#endif  // __LVTS_H
+#endif  // __TEMPERATURESENSOR_H

@@ -24,8 +24,9 @@
 #include "Arduino.h"
 #include "LVTS.h"
 #include "ValueAvgInt.h"
+#include "SensorTypes.h"
 
-LVTS::LVTS(int pin, LVTS_Type type)
+LVTS::LVTS(int pin, FT_SensorType type)
 {
     this->pin  = pin;
     pinMode(pin, INPUT);
@@ -47,10 +48,10 @@ bool LVTS::getTemperature(double* value)
     bool ok;
     switch ( type )
     {
-        case LVTS_LM34:
+        case SENSOR_LVTS_LM34:
             *value = lm34(filter.getValue(), &ok);
             break;
-        case LVTS_LM35:
+        case SENSOR_LVTS_LM35:
             *value = lm35(filter.getValue(), &ok);
             break;
         default :

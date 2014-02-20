@@ -23,7 +23,7 @@
 
 #include "LVTS.h"
 
-LVTS lvts(A0, LVTS_LM35);
+LVTS lvts(A0, SENSOR_LVTS_LM35);
 
 void setup() 
 {

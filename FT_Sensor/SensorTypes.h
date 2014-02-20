@@ -1,7 +1,7 @@
 /**
- * @file LVTS.h
+ * @file SensorTypes.h
  * @author Johan Simonsson
- * @brief Low Voltage Temperature Sensor Class
+ * @brief SensorType has the supported list of sensors
  */
 
 /*
@@ -21,25 +21,17 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef  __LVTS_H
-#define  __LVTS_H
+#ifndef  __SENSORTYPES_H
+#define  __SENSORTYPES_H
 
-#include "SensorTypes.h"
 
-class LVTS
+typedef enum
 {
-    private:
-        int pin;
-        FT_SensorType type;
+    SENSOR_NONE = 0,  ///< No sensor
+    SENSOR_DS18B20,   ///< DS18B20 a OneWire temperature sensor.
+    SENSOR_LVTS_LM34, ///< LM34 a low voltage temperature sensor. 10mV per degF.
+    SENSOR_LVTS_LM35  ///< LM35 a low voltage temperature sensor. 10mV per degC.
+} FT_SensorType;
 
-        static double lm34(int reading, bool *ok);
-        static double lm35(int reading, bool *ok);
-        static double F2C(double degC);
 
-    public:
-        LVTS(int pin, FT_SensorType type);
-        bool getTemperature(double* value);
-
-};
-
-#endif  // __LVTS_H
+#endif  // __SENSORTYPES_H
