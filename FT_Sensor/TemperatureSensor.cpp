@@ -147,7 +147,15 @@ bool TemperatureSensor::getTemperature(double* value)
 }
 
 
-
+/**
+ * Check if there is any active alarms.
+ *
+ * Please note that this should be called after getTemperature().
+ *
+ * $see getTemperature
+ *
+ * @return SensorAlarmNumber for the type of alarm.
+ */
 SensorAlarmNumber TemperatureSensor::alarmCheck()
 {
     //if(!allowAlarm())
@@ -249,7 +257,11 @@ SensorAlarmNumber TemperatureSensor::alarmCheck()
     return num;
 }
 
-//Alarm Acknowledgement
+/**
+ * Acknowledge alarm, dont send any more at this time.
+ *
+ * @param num The alarm to ack
+ */
 void TemperatureSensor::alarmAck(SensorAlarmNumber num)
 {
     switch ( num )
@@ -271,6 +283,8 @@ void TemperatureSensor::alarmAck(SensorAlarmNumber num)
             {
                 alarmHigh = ALARM_ACKED;
             }
+            break;
+        case SENSOR_ALARM_NO:
             break;
     }
 }
