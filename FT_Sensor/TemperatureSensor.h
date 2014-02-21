@@ -42,9 +42,9 @@ typedef enum
 /// The statemachine for the alarm
 typedef enum
 {
-    ALARM_ACTIVE = 0, ///< The alarm is triggered.
-    ALARM_ACKED,      ///< The alarm is triggered, and is ack:ed.
-    ALARM_NOT_ACTIVE  ///< The alarm is not triggered, all is fine.
+    ALARM_NOT_ACTIVE=0,///< The alarm is not triggered, all is fine.
+    ALARM_ACTIVE,      ///< The alarm is triggered.
+    ALARM_ACKED,       ///< The alarm is triggered, and is ack:ed.
 } AlarmStates;
 
 
@@ -137,21 +137,32 @@ class TemperatureSensor
         AlarmStates alarmLow;    ///< Current state for the low level alarm.
         AlarmStates alarmHigh;   ///< Current state for the high level alarm.
 
-        unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
+        bool alarmLowActive;
+        bool alarmHighActive;
 
         //Variables for the value
         double valueWork;   ///< Active value that we work with right now
+
+        unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
+        double alarmHyst;
+        double alarmHighLevel;
+        double alarmLowLevel;
 
     public:
         TemperatureSensor();
         ~TemperatureSensor();
 
         void init(int pin, FT_SensorType type);
+        void setAlarmLevels(
+                double alarmHyst,
+                bool activateLowAlarm, double alarmLevelLow,
+                bool activateHighAlarm, double alarmLevelHigh);
+
 
         bool getTemperature(double* value);
 
         SensorAlarmNumber alarmCheck();
-        void alarmAck(SensorAlarmNumber num); //Alarm Acknowledgement
+        void alarmAck(SensorAlarmNumber num);
 
 };
 

@@ -38,6 +38,17 @@ TemperatureSensor::TemperatureSensor()
 
     failcnt = 0;
     valueWork = 0;
+
+    alarmLowActive = false;
+    alarmHighActive = false;
+
+    alarmSensor = ALARM_NOT_ACTIVE;
+    alarmLow = ALARM_NOT_ACTIVE;
+    alarmHigh = ALARM_NOT_ACTIVE;
+
+    alarmHyst = 0.0;
+    alarmLowLevel  = 10.0;
+    alarmHighLevel = 80.0;
 }
 
 TemperatureSensor::~TemperatureSensor()
@@ -74,6 +85,35 @@ void TemperatureSensor::init(int pin, FT_SensorType type)
 
 }
 
+/**
+ * Active alarm and set what alarm levels to be used.
+ *
+ * Please note that the low alarm is activated under alarmLowLevel-alarmHyst,
+ * and deactivates over alarmLowLevel.
+ * The high alarm activates over alarmHighLevel+alarmHyst,
+ * and deactivates lower than alarmLowLevel.
+ *
+ * @param alarmHyst How big hysteresis around the alarm level.
+ * @param activateLowAlarm true to activate low alarm.
+ * @param alarmLevelLow alarm level for low.
+ * @param activateHighAlarm true to active high alarm.
+ * @param alarmLevelHigh alarm level for high.
+ */
+void TemperatureSensor::setAlarmLevels(
+        double alarmHyst,
+        bool activateLowAlarm, double alarmLevelLow,
+        bool activateHighAlarm, double alarmLevelHigh)
+{
+    this->alarmHyst = alarmHyst;
+
+    alarmLowActive = activateLowAlarm;
+    this->alarmLowLevel = alarmLevelLow;
+
+    alarmHighActive = activateHighAlarm;
+    this->alarmHighLevel = alarmLevelHigh;
+}
+
+
 bool TemperatureSensor::getTemperature(double* value)
 {
     bool ret = false;
@@ -100,6 +140,9 @@ bool TemperatureSensor::getTemperature(double* value)
         failcnt++;
     }
 
+    /// @todo old value, is it time to send?
+    /// @todo valueDiff, is it time to send?
+
     return ret;
 }
 
@@ -107,18 +150,127 @@ bool TemperatureSensor::getTemperature(double* value)
 
 SensorAlarmNumber TemperatureSensor::alarmCheck()
 {
+    //if(!allowAlarm())
+    //    return false;
+
     SensorAlarmNumber num = SENSOR_ALARM_NO;
 
-    if(failcnt>5)
+    //First check the sensor error alarm.
+    switch ( alarmSensor )
     {
-        num = SENSOR_ALARM_SENSOR;
+        case ALARM_NOT_ACTIVE:
+            if(failcnt>5)
+            {
+                num = SENSOR_ALARM_SENSOR;
+                alarmSensor = ALARM_ACTIVE;
+            }
+            break;
+        case ALARM_ACTIVE:
+            if(failcnt==0)
+            {
+                alarmSensor = ALARM_NOT_ACTIVE;
+            }
+            else
+            {
+                num = SENSOR_ALARM_SENSOR;
+            }
+            break;
+        case ALARM_ACKED:
+            if(failcnt==0)
+            {
+                alarmSensor = ALARM_NOT_ACTIVE;
+            }
+            break;
     }
- 
+
+    if(num!=SENSOR_ALARM_NO)
+        return num;
+
+    //Then check the low value alarm.
+    switch ( alarmLow )
+    {
+        case ALARM_NOT_ACTIVE:
+            if(valueWork < alarmLowLevel - alarmHyst)
+            {
+                num = SENSOR_ALARM_LOW;
+                alarmLow = ALARM_ACTIVE;
+            }
+            break;
+        case ALARM_ACTIVE:
+            if(valueWork > alarmLowLevel)
+            {
+                alarmLow = ALARM_NOT_ACTIVE;
+            }
+            else
+            {
+                num = SENSOR_ALARM_LOW;
+            }
+            break;
+        case ALARM_ACKED:
+            if(valueWork > alarmLowLevel)
+            {
+                alarmLow = ALARM_NOT_ACTIVE;
+            }
+            break;
+    }
+
+    if(num!=SENSOR_ALARM_NO)
+        return num;
+
+
+    //Then check the high value alarm.
+    switch ( alarmHigh )
+    {
+        case ALARM_NOT_ACTIVE:
+            if(valueWork > alarmHighLevel + alarmHyst)
+            {
+                num = SENSOR_ALARM_HIGH;
+                alarmHigh = ALARM_ACTIVE;
+            }
+            break;
+        case ALARM_ACTIVE:
+            if(valueWork < alarmHighLevel)
+            {
+                alarmLow = ALARM_NOT_ACTIVE;
+            }
+            else
+            {
+                num = SENSOR_ALARM_HIGH;
+            }
+            break;
+        case ALARM_ACKED:
+            if(valueWork < alarmHighLevel)
+            {
+                alarmHigh = ALARM_NOT_ACTIVE;
+            }
+            break;
+    }
+
     return num;
 }
 
 //Alarm Acknowledgement
 void TemperatureSensor::alarmAck(SensorAlarmNumber num)
 {
-
+    switch ( num )
+    {
+        case SENSOR_ALARM_SENSOR:
+            if( alarmSensor == ALARM_ACTIVE )
+            {
+                alarmSensor = ALARM_ACKED;
+            }
+            break;
+        case SENSOR_ALARM_LOW:
+            if( alarmLow == ALARM_ACTIVE )
+            {
+                alarmLow = ALARM_ACKED;
+            }
+            break;
+        case SENSOR_ALARM_HIGH:
+            if( alarmHigh == ALARM_ACTIVE )
+            {
+                alarmHigh = ALARM_ACKED;
+            }
+            break;
+    }
 }
