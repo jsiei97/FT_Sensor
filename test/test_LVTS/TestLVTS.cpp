@@ -43,7 +43,7 @@ void TestLVTS::test_LM34()
     QFETCH(int, read);
     QFETCH(double, temperature);
 
-    LVTS lvts(1, LVTS_LM34);
+    LVTS lvts(1, SENSOR_LVTS_LM34);
 
     bool ok = false;
 
@@ -77,7 +77,7 @@ void TestLVTS::test_LM35()
     QFETCH(int, read);
     QFETCH(double, temperature);
 
-    LVTS lvts(1, LVTS_LM35);
+    LVTS lvts(1, SENSOR_LVTS_LM35);
 
     bool ok = false;
 
@@ -133,7 +133,7 @@ extern unsigned long my_local_analog;
 void TestLVTS::test_getTemperature_LM34()
 {
     my_local_analog = 633; //~20degC
-    LVTS lvts(1, LVTS_LM34);
+    LVTS lvts(1, SENSOR_LVTS_LM34);
 
     double value;
     QVERIFY (lvts.getTemperature(&value));
@@ -146,7 +146,7 @@ void TestLVTS::test_getTemperature_LM34()
 void TestLVTS::test_getTemperature_LM35()
 {
     my_local_analog = 186; //~20degC
-    LVTS lvts(1, LVTS_LM35);
+    LVTS lvts(1, SENSOR_LVTS_LM35);
 
     double value;
     QVERIFY (lvts.getTemperature(&value));
