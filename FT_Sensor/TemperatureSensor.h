@@ -52,11 +52,11 @@ typedef enum
 /**
  * A Temperature sensor class for the DS18B20 and LVTS (i.e. LM35).
  *
- * This will class will wrap the different sensors and give them the 
+ * This will class will wrap the different sensors and give them the
  * same interface so they can be put in a array and just looped from main.
  *
  * There is also some some alarm logic so that main know when things is wrong.
- * The alarm is active as long as it is not ack:ed (Acknowledged) or until what 
+ * The alarm is active as long as it is not ack:ed (Acknowledged) or until what
  * triggered the alarm ends, like the temperature goes back to normal.
  *
  *
@@ -67,14 +67,14 @@ typedef enum
  *   label="State machine for SENSOR_ALARM_SENSOR"
  *   rankdir=LR;
  *   size="8,5"
- * 
+ *
  *   node [shape = circle, label="ALARM_NOT_ACTIVE" ] NA;
  *   node [shape = circle, label="ALARM_ACTIVE" ]     AN;
  *   node [shape = circle, label="ALARM_ACKED" ]      ACK;
- * 
+ *
  *   node [shape = point ]; qi
  *   qi -> NA;
- * 
+ *
  *   NA  -> AN  [ label = "failcnt > 5" ];
  *   AN  -> ACK [ label = "alarmAck()" ];
  *   ACK -> NA  [ label = "failcnt == 0" ];
@@ -89,14 +89,14 @@ typedef enum
  *   label="State machine for SENSOR_ALARM_LOW"
  *   rankdir=LR;
  *   size="8,5"
- * 
+ *
  *   node [shape = circle, label="ALARM_NOT_ACTIVE" ] NA;
  *   node [shape = circle, label="ALARM_ACTIVE" ]     AN;
  *   node [shape = circle, label="ALARM_ACKED" ]      ACK;
- * 
+ *
  *   node [shape = point ]; qi
  *   qi -> NA;
- * 
+ *
  *   NA  -> AN  [ label = "value < alarmLow - alarmHyst" ];
  *   AN  -> ACK [ label = "alarmAck()" ];
  *   ACK -> NA  [ label = "value > alarmLow" ];
@@ -111,14 +111,14 @@ typedef enum
  *   label="State machine for SENSOR_ALARM_HIGH"
  *   rankdir=LR;
  *   size="8,5"
- * 
+ *
  *   node [shape = circle, label="ALARM_NOT_ACTIVE" ] NA;
  *   node [shape = circle, label="ALARM_ACTIVE" ]     AN;
  *   node [shape = circle, label="ALARM_ACKED" ]      ACK;
- * 
+ *
  *   node [shape = point ]; qi
  *   qi -> NA;
- * 
+ *
  *   NA  -> AN  [ label = "value > alarmHigh + alarmHyst" ];
  *   AN  -> ACK [ label = "alarmAck()" ];
  *   ACK -> NA  [ label = "value < alarmHigh" ];
@@ -132,6 +132,10 @@ class TemperatureSensor
         FT_SensorType type; ///< What kind of sensor is this object?
         DS18B20* ds;        ///< Ref to DS18B20 if correct type.
         LVTS*    lvts;      ///< Ref to LVTS if correct type.
+
+        AlarmStates alarmSensor; ///< Current state for the sensor read alarm.
+        AlarmStates alarmLow;    ///< Current state for the low level alarm.
+        AlarmStates alarmHigh;   ///< Current state for the high level alarm.
 
         unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
 
