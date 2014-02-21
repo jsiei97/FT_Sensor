@@ -116,3 +116,9 @@ SensorAlarmNumber TemperatureSensor::alarmCheck()
  
     return num;
 }
+
+//Alarm Acknowledgement
+void TemperatureSensor::alarmAck(SensorAlarmNumber num)
+{
+
+}

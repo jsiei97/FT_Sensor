@@ -39,6 +39,93 @@ typedef enum
 } SensorAlarmNumber;
 
 
+/// The statemachine for the alarm
+typedef enum
+{
+    ALARM_ACTIVE = 0, ///< The alarm is triggered.
+    ALARM_ACKED,      ///< The alarm is triggered, and is ack:ed.
+    ALARM_NOT_ACTIVE  ///< The alarm is not triggered, all is fine.
+} AlarmStates;
+
+
+
+/**
+ * A Temperature sensor class for the DS18B20 and LVTS (i.e. LM35).
+ *
+ * This will class will wrap the different sensors and give them the 
+ * same interface so they can be put in a array and just looped from main.
+ *
+ * There is also some some alarm logic so that main know when things is wrong.
+ * The alarm is active as long as it is not ack:ed (Acknowledged) or until what 
+ * triggered the alarm ends, like the temperature goes back to normal.
+ *
+ *
+ * Sensor read alarm is triggered if there is a read error.
+ * @see SENSOR_ALARM_SENSOR
+ * \dot
+ * digraph finite_state_machine {
+ *   label="State machine for SENSOR_ALARM_SENSOR"
+ *   rankdir=LR;
+ *   size="8,5"
+ * 
+ *   node [shape = circle, label="ALARM_NOT_ACTIVE" ] NA;
+ *   node [shape = circle, label="ALARM_ACTIVE" ]     AN;
+ *   node [shape = circle, label="ALARM_ACKED" ]      ACK;
+ * 
+ *   node [shape = point ]; qi
+ *   qi -> NA;
+ * 
+ *   NA  -> AN  [ label = "failcnt > 5" ];
+ *   AN  -> ACK [ label = "alarmAck()" ];
+ *   ACK -> NA  [ label = "failcnt == 0" ];
+ *   AN  -> NA  [ label = "failcnt == 0" ];
+ * }
+ * \enddot
+ *
+ * Low level alarm is if the value is lower than the alarm low level.
+ * @see SENSOR_ALARM_LOW
+ * \dot
+ * digraph finite_state_machine {
+ *   label="State machine for SENSOR_ALARM_LOW"
+ *   rankdir=LR;
+ *   size="8,5"
+ * 
+ *   node [shape = circle, label="ALARM_NOT_ACTIVE" ] NA;
+ *   node [shape = circle, label="ALARM_ACTIVE" ]     AN;
+ *   node [shape = circle, label="ALARM_ACKED" ]      ACK;
+ * 
+ *   node [shape = point ]; qi
+ *   qi -> NA;
+ * 
+ *   NA  -> AN  [ label = "value < alarmLow - alarmHyst" ];
+ *   AN  -> ACK [ label = "alarmAck()" ];
+ *   ACK -> NA  [ label = "value > alarmLow" ];
+ *   AN  -> NA  [ label = "value > alarmLow" ];
+ * }
+ * \enddot
+ *
+ * High level alarm is if the value is higher than alarm high level.
+ * @see SENSOR_ALARM_HIGH
+ * \dot
+ * digraph finite_state_machine {
+ *   label="State machine for SENSOR_ALARM_HIGH"
+ *   rankdir=LR;
+ *   size="8,5"
+ * 
+ *   node [shape = circle, label="ALARM_NOT_ACTIVE" ] NA;
+ *   node [shape = circle, label="ALARM_ACTIVE" ]     AN;
+ *   node [shape = circle, label="ALARM_ACKED" ]      ACK;
+ * 
+ *   node [shape = point ]; qi
+ *   qi -> NA;
+ * 
+ *   NA  -> AN  [ label = "value > alarmHigh + alarmHyst" ];
+ *   AN  -> ACK [ label = "alarmAck()" ];
+ *   ACK -> NA  [ label = "value < alarmHigh" ];
+ *   AN  -> NA  [ label = "value < alarmHigh" ];
+ * }
+ * \enddot
+ */
 class TemperatureSensor
 {
     private:
@@ -60,7 +147,7 @@ class TemperatureSensor
         bool getTemperature(double* value);
 
         SensorAlarmNumber alarmCheck();
-        //void alarmAck(SensorAlarmNumber num); //Alarm Acknowledgement
+        void alarmAck(SensorAlarmNumber num); //Alarm Acknowledgement
 
 };
 
