@@ -33,6 +33,10 @@ void setup()
     Serial.begin(9600);
     Serial.println("TemperatureSensor test!");
 
+    //Since we use a LVTS
+    //INTERNAL: an built-in reference, equal to 1.1 volts on the ATmega168 or ATmega328
+    analogReference(INTERNAL); //1.1V
+
     //First a LM35 connect on A0
     sensor[0].init(A0, SENSOR_LVTS_LM35);
     sensor[0].setValueMaxCnt(30);
@@ -61,26 +65,36 @@ void loop()
             Serial.println(" *C");
         }
 
-        switch ( sensor[i].alarmCheck() )
+        //Now loop and Ack them...
+        int maxCnt = 20;
+        SensorAlarmNumber num;
+        do
         {
-            case SENSOR_ALARM_NO:
-                break;
-            case SENSOR_ALARM_SENSOR:
-                Serial.print("S");
-                Serial.print(i);
-                Serial.println(" - Alarm: Sensor error");
-                break;
-            case SENSOR_ALARM_HIGH:
-                Serial.print("S");
-                Serial.print(i);
-                Serial.println(" - Alarm: High value");
-                break;
-            case SENSOR_ALARM_LOW:
-                Serial.print("S");
-                Serial.print(i);
-                Serial.println(" - Alarm: Low value");
-                break;
+            num = sensor[i].alarmCheck();
+            switch ( num )
+            {
+                case SENSOR_ALARM_SENSOR:
+                    Serial.print("S");
+                    Serial.print(i);
+                    Serial.println(" - Alarm: Sensor error");
+                    sensor[i].alarmAck(num);
+                    break;
+                case SENSOR_ALARM_HIGH:
+                    Serial.print("S");
+                    Serial.print(i);
+                    Serial.println(" - Alarm: High value");
+                    sensor[i].alarmAck(num);
+                    break;
+                case SENSOR_ALARM_LOW:
+                    Serial.print("S");
+                    Serial.print(i);
+                    Serial.println(" - Alarm: Low value");
+                    sensor[i].alarmAck(num);
+                    break;
+            }
+            maxCnt--;
         }
+        while( num != SENSOR_ALARM_NO && maxCnt != 0);
     }
 
     delay(1000);
