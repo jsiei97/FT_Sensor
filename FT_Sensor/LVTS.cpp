@@ -89,7 +89,7 @@ double LVTS::lm35(int reading, bool *ok)
     //-"Rated for full −55 ̊ to +150 ̊C range"
     //But with Aref 1.1 we only get values
     //from 0V..1.05V => 0degC..105degC
-    if( temperature <= 105.0 && temperature >= 0.0 )
+    if( temperature <= 105.0 && temperature > 0.0 )
     {
         *ok=true;
         return temperature;
