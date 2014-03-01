@@ -37,7 +37,12 @@ TemperatureSensor::TemperatureSensor()
     this->type=SENSOR_NONE;
 
     failcnt = 0;
+
     valueWork = 0;
+    valueSent = 0;
+    valueDiffMax = 0;
+    valueSendMax = 0;
+    valueSendCnt = valueSendMax;
 
     alarmLowActive = false;
     alarmHighActive = false;
@@ -113,6 +118,30 @@ void TemperatureSensor::setAlarmLevels(
     this->alarmHighLevel = alarmLevelHigh;
 }
 
+/**
+ * Enable value diff to send value.
+ *
+ * Value needs to diff more than this value to be treated as a new value that should be send.
+ *
+ * @param diff the value
+ */
+void TemperatureSensor::setValueDiff(double diff)
+{
+    valueDiffMax = diff;
+}
+
+/**
+ * Enable send after X counts even if value is the same
+ *
+ * To make sure that we sometimes get a value even if there is no change.
+ *
+ * @param cnt how many times can we call getTemperature before we always gets a value.
+ */
+void TemperatureSensor::setValueMaxCnt(int cnt)
+{
+    valueSendMax = cnt;
+    valueSendCnt = valueSendMax;
+}
 
 bool TemperatureSensor::getTemperature(double* value)
 {
@@ -133,15 +162,42 @@ bool TemperatureSensor::getTemperature(double* value)
     if(ret)
     {
         failcnt=0;
+        /// @todo valueWork += valueOffset;
         valueWork = *value;
+
+        if(valueSendMax != 0)
+        {
+            if(0 == valueSendCnt)
+            {
+                valueSendCnt = valueSendMax;
+                valueSent = valueWork;
+                return true;
+            }
+            else
+            {
+                valueSendCnt--;
+            }
+        }
+
+        if(valueDiffMax != 0.0)
+        {
+            double diff = valueWork-valueSent;
+            if( diff > valueDiffMax || -diff > valueDiffMax )
+            {
+                valueSendCnt = valueSendMax;
+                valueSent = valueWork;
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
     }
     else
     {
         failcnt++;
     }
-
-    /// @todo old value, is it time to send?
-    /// @todo valueDiff, is it time to send?
 
     return ret;
 }

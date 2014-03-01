@@ -14,6 +14,9 @@ class TestTemperatureSensor : public QObject
 
     private slots:
         void test_Basic();
+        void test_Diff();
+        void test_MaxCnt();
+
         void test_AlarmSensor();
         void test_AlarmLow();
         void test_AlarmHigh();
@@ -76,6 +79,111 @@ void TestTemperatureSensor::test_Basic()
     QVERIFY( !sensor[0].getTemperature(&value) );
     QVERIFY( !sensor[0].getTemperature(&value) );
     QCOMPARE( sensor[0].failcnt, (unsigned int)2);
+}
+
+
+void TestTemperatureSensor::test_Diff()
+{
+    TemperatureSensor sensor;
+
+    sensor.init(1, SENSOR_DS18B20);
+    sensor.setValueDiff(1.0);
+
+    double value;
+
+    my_global_ds18b20 = 18.20;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+
+    //Same value => false
+    QVERIFY( !sensor.getTemperature(&value) );
+
+    //0.5 < 1.0 => false
+    my_global_ds18b20 += 0.5;
+    QVERIFY( !sensor.getTemperature(&value) );
+
+    //1.5 > 1.0 => true
+    my_global_ds18b20 += 1.0;
+    QVERIFY( sensor.getTemperature(&value) );
+
+    //Same value => false
+    QVERIFY( !sensor.getTemperature(&value) );
+
+    //1.5 > 1.0 => true
+    my_global_ds18b20 -= 1.5;
+    QVERIFY( sensor.getTemperature(&value) );
+
+    //Same value => false
+    QVERIFY( !sensor.getTemperature(&value) );
+}
+
+
+/**
+ * Test the timeout count so we always get a value even if there is no new data.
+ */
+void TestTemperatureSensor::test_MaxCnt()
+{
+    TemperatureSensor sensor;
+
+    sensor.init(1, SENSOR_DS18B20);
+    int cntMax = 60;
+    sensor.setValueMaxCnt(cntMax);
+    sensor.setValueDiff(1.0);
+
+    double value;
+
+    my_global_ds18b20 = 18.20;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+
+
+    //Test with the same value a lot of times.
+    for( int k=0 ; k<5 ; k++ )
+    {
+        //Same value => false
+        //but only 60 times
+        for( int i=cntMax ; i>0 ; i-- )
+        {
+            //Here we shall get false back since there is no new data!
+            if( sensor.getTemperature(&value) )
+            {
+                qDebug() << "Error" << k << i;
+                QFAIL("We should no fail");
+            }
+        }
+
+        //Now we shall get a timeout value => true
+        QVERIFY( sensor.getTemperature(&value) );
+    }
+
+    //Now test that we count correct when value does change!
+    for( int k=0 ; k<5 ; k++ )
+    {
+        //Same value => false
+        //but only 60 times
+        for( int i=(cntMax/2) ; i>0 ; i-- )
+        {
+            QVERIFY( !sensor.getTemperature(&value) );
+        }
+
+        my_global_ds18b20 += 2.0;
+        QVERIFY( sensor.getTemperature(&value) );
+
+        //Same value => false
+        //but only 60 times
+        for( int i=cntMax ; i>0 ; i-- )
+        {
+            //Here we shall get false back since there is no new data!
+            if( sensor.getTemperature(&value) )
+            {
+                qDebug() << "Error" << k << i;
+                QFAIL("We should no fail");
+            }
+        }
+
+        //Now we shall get a timeout value => true
+        QVERIFY( sensor.getTemperature(&value) );
+    }
 }
 
 

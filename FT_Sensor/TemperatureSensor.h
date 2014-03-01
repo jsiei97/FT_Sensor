@@ -142,6 +142,12 @@ class TemperatureSensor
 
         //Variables for the value
         double valueWork;   ///< Active value that we work with right now
+        double valueSent;   ///< Last value sent to the server
+        double valueDiffMax;///< Value should diff more than this to be sent to the server
+        int    valueSendCnt;///< Always send after "cnt time" even if there is no change, the cnt variable.
+        int    valueSendMax;///< Always send after "cnt time" even if there is no change, the max value.
+
+        //double valueOffset; ///< Offset calibration value, this will just be added to the messured value
 
         unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
         double alarmHyst;
@@ -157,6 +163,8 @@ class TemperatureSensor
                 double alarmHyst,
                 bool activateLowAlarm, double alarmLevelLow,
                 bool activateHighAlarm, double alarmLevelHigh);
+        void setValueDiff(double diff);
+        void setValueMaxCnt(int cnt);
 
 
         bool getTemperature(double* value);
