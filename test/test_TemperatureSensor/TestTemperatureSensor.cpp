@@ -16,6 +16,7 @@ class TestTemperatureSensor : public QObject
         void test_Basic();
         void test_Diff();
         void test_MaxCnt();
+        void test_Offset();
 
         void test_AlarmSensor();
         void test_AlarmLow();
@@ -184,6 +185,37 @@ void TestTemperatureSensor::test_MaxCnt()
         //Now we shall get a timeout value => true
         QVERIFY( sensor.getTemperature(&value) );
     }
+}
+
+
+void TestTemperatureSensor::test_Offset()
+{
+    TemperatureSensor sensor;
+
+    sensor.init(1, SENSOR_DS18B20);
+    double offset = 2.0;
+    sensor.setValueOffset(offset);
+
+    double value;
+
+    my_global_ds18b20 = 18.20;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20+offset );
+
+    my_global_ds18b20 = 34.20;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20+offset );
+
+    offset = -2.0;
+    sensor.setValueOffset(offset);
+
+    my_global_ds18b20 = 24.00;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20+offset );
+
+    my_global_ds18b20 = -12.00;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20+offset );
 }
 
 

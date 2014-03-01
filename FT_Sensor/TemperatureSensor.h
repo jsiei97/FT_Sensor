@@ -147,7 +147,7 @@ class TemperatureSensor
         int    valueSendCnt;///< Always send after "cnt time" even if there is no change, the cnt variable.
         int    valueSendMax;///< Always send after "cnt time" even if there is no change, the max value.
 
-        //double valueOffset; ///< Offset calibration value, this will just be added to the messured value
+        double valueOffset; ///< Offset calibration value, this will just be added to the messured value
 
         unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
         double alarmHyst;
@@ -165,13 +165,12 @@ class TemperatureSensor
                 bool activateHighAlarm, double alarmLevelHigh);
         void setValueDiff(double diff);
         void setValueMaxCnt(int cnt);
-
+        void setValueOffset(double offset);
 
         bool getTemperature(double* value);
 
         SensorAlarmNumber alarmCheck();
         void alarmAck(SensorAlarmNumber num);
-
 };
 
 #endif  // __TEMPERATURESENSOR_H

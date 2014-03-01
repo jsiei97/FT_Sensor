@@ -43,6 +43,7 @@ TemperatureSensor::TemperatureSensor()
     valueDiffMax = 0;
     valueSendMax = 0;
     valueSendCnt = valueSendMax;
+    valueOffset = 0.0;
 
     alarmLowActive = false;
     alarmHighActive = false;
@@ -143,6 +144,16 @@ void TemperatureSensor::setValueMaxCnt(int cnt)
     valueSendCnt = valueSendMax;
 }
 
+/**
+ * Calibration offset value to add to value.
+ *
+ * @param offset a number that will be added onto any read value
+ */
+void TemperatureSensor::setValueOffset(double offset)
+{
+    valueOffset = offset;
+}
+
 bool TemperatureSensor::getTemperature(double* value)
 {
     bool ret = false;
@@ -162,7 +173,7 @@ bool TemperatureSensor::getTemperature(double* value)
     if(ret)
     {
         failcnt=0;
-        /// @todo valueWork += valueOffset;
+        *value += valueOffset;
         valueWork = *value;
 
         if(valueSendMax != 0)
