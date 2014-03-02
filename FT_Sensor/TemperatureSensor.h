@@ -129,6 +129,7 @@ typedef enum
 class TemperatureSensor
 {
     private:
+    protected:
         FT_SensorType type; ///< What kind of sensor is this object?
         DS18B20* ds;        ///< Ref to DS18B20 if correct type.
         LVTS*    lvts;      ///< Ref to LVTS if correct type.
