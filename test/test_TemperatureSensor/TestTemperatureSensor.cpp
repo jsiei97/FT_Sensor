@@ -23,6 +23,7 @@ class TestTemperatureSensor : public QObject
         void test_AlarmHigh();
 
         void test_AlarmAll();
+        void test_Alarm();
 };
 
 
@@ -498,6 +499,54 @@ void TestTemperatureSensor::test_AlarmAll()
     }
 }
 
+void TestTemperatureSensor::test_Alarm()
+{
+    TemperatureSensor sensor[2];
+
+    sensor[0].init(1, SENSOR_DS18B20);
+    sensor[1].init(1, SENSOR_LVTS_LM35);
+
+    sensor[0].setAlarmLevels(1.0, true, 20.0, true, 25.0);
+    sensor[1].setAlarmLevels(1.0, true, 20.0, true, 25.0);
+
+    double value;
+
+    //One high and one low
+    my_global_ds18b20 = 10.00;
+    QVERIFY( sensor[0].getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+
+    my_global_lm35 = 30.00;
+    QVERIFY( sensor[1].getTemperature(&value) );
+    QCOMPARE( value, my_global_lm35 );
+
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_LOW);
+    QCOMPARE( sensor[1].alarmCheck(), SENSOR_ALARM_HIGH);
+
+    //Then the other way
+    my_global_ds18b20 = 30.00;
+    QVERIFY( sensor[0].getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+
+    my_global_lm35 = 10.00;
+    QVERIFY( sensor[1].getTemperature(&value) );
+    QCOMPARE( value, my_global_lm35 );
+
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_HIGH);
+    QCOMPARE( sensor[1].alarmCheck(), SENSOR_ALARM_LOW);
+
+    //Then back to normal
+    my_global_ds18b20 = 22.00;
+    QVERIFY( sensor[0].getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+
+    my_global_lm35 = 22.00;
+    QVERIFY( sensor[1].getTemperature(&value) );
+    QCOMPARE( value, my_global_lm35 );
+
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_NO);
+    QCOMPARE( sensor[1].alarmCheck(), SENSOR_ALARM_NO);
+}
 
 QTEST_MAIN(TestTemperatureSensor)
 #include "TestTemperatureSensor.moc"
