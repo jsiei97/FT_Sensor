@@ -3,6 +3,7 @@ QT     -= gui
 TEMPLATE = app
 TARGET =
 DEFINES += private=public
+DEFINES += protected=public
 
 # Test code
 DEPENDPATH += .
