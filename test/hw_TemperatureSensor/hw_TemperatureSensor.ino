@@ -26,7 +26,7 @@
 #include "SensorTypes.h"
 
 #define SENSOR_CNT 2
-TemperatureSensor sensor[SENSOR_CNT];
+TemperatureSensor *sensor = new TemperatureSensor[SENSOR_CNT];
 
 void setup()
 {
@@ -41,13 +41,13 @@ void setup()
     sensor[0].init(A0, SENSOR_LVTS_LM35);
     sensor[0].setValueMaxCnt(30);
     sensor[0].setValueDiff(1.0);
-    sensor[0].setAlarmLevels(2.0, true, 20.0, true, 25.0);
+    sensor[0].setAlarmLevels(1.0, true, 21.0, true, 25.0);
 
     //Then a DS18B20 on A1
     sensor[1].init(A1, SENSOR_DS18B20);
     sensor[1].setValueMaxCnt(30);
     sensor[1].setValueDiff(0.5);
-    sensor[1].setAlarmLevels(2.0, true, 20.0, true, 25.0);
+    sensor[1].setAlarmLevels(1.0, true, 21.0, true, 25.0);
 }
 
 void loop()
@@ -58,7 +58,8 @@ void loop()
     {
         if( sensor[i].getTemperature(&temperature) )
         {
-            Serial.print("S");
+            Serial.print((millis()/1000));         
+            Serial.print(": S");
             Serial.print(i);
             Serial.print(" - Temperature: ");
             Serial.print(temperature);
