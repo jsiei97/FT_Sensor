@@ -97,10 +97,10 @@ typedef enum
  *   node [shape = point ]; qi
  *   qi -> NA;
  *
- *   NA  -> AN  [ label = "value < alarmLow - alarmHyst" ];
+ *   NA  -> AN  [ label = "value < alarmLow" ];
  *   AN  -> ACK [ label = "alarmAck()" ];
- *   ACK -> NA  [ label = "value > alarmLow" ];
- *   AN  -> NA  [ label = "value > alarmLow" ];
+ *   ACK -> NA  [ label = "value > alarmLow + alarmHyst" ];
+ *   AN  -> NA  [ label = "value > alarmLow + alarmHyst" ];
  * }
  * \enddot
  *
@@ -119,10 +119,10 @@ typedef enum
  *   node [shape = point ]; qi
  *   qi -> NA;
  *
- *   NA  -> AN  [ label = "value > alarmHigh + alarmHyst" ];
+ *   NA  -> AN  [ label = "value > alarmHigh" ];
  *   AN  -> ACK [ label = "alarmAck()" ];
- *   ACK -> NA  [ label = "value < alarmHigh" ];
- *   AN  -> NA  [ label = "value < alarmHigh" ];
+ *   ACK -> NA  [ label = "value < alarmHigh - alarmHyst" ];
+ *   AN  -> NA  [ label = "value < alarmHigh - alarmHyst" ];
  * }
  * \enddot
  */

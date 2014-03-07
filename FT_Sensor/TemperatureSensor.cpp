@@ -265,14 +265,14 @@ SensorAlarmNumber TemperatureSensor::alarmCheck()
     switch ( alarmLow )
     {
         case ALARM_NOT_ACTIVE:
-            if(valueWork < alarmLowLevel - alarmHyst)
+            if(valueWork < alarmLowLevel)
             {
                 num = SENSOR_ALARM_LOW;
                 alarmLow = ALARM_ACTIVE;
             }
             break;
         case ALARM_ACTIVE:
-            if(valueWork > alarmLowLevel)
+            if(valueWork > alarmLowLevel + alarmHyst)
             {
                 alarmLow = ALARM_NOT_ACTIVE;
             }
@@ -282,7 +282,7 @@ SensorAlarmNumber TemperatureSensor::alarmCheck()
             }
             break;
         case ALARM_ACKED:
-            if(valueWork > alarmLowLevel)
+            if(valueWork > alarmLowLevel + alarmHyst)
             {
                 alarmLow = ALARM_NOT_ACTIVE;
             }
@@ -297,14 +297,14 @@ SensorAlarmNumber TemperatureSensor::alarmCheck()
     switch ( alarmHigh )
     {
         case ALARM_NOT_ACTIVE:
-            if(valueWork > alarmHighLevel + alarmHyst)
+            if(valueWork > alarmHighLevel)
             {
                 num = SENSOR_ALARM_HIGH;
                 alarmHigh = ALARM_ACTIVE;
             }
             break;
         case ALARM_ACTIVE:
-            if(valueWork < alarmHighLevel)
+            if(valueWork < alarmHighLevel - alarmHyst)
             {
                 alarmLow = ALARM_NOT_ACTIVE;
             }
@@ -314,7 +314,7 @@ SensorAlarmNumber TemperatureSensor::alarmCheck()
             }
             break;
         case ALARM_ACKED:
-            if(valueWork < alarmHighLevel)
+            if(valueWork < alarmHighLevel - alarmHyst)
             {
                 alarmHigh = ALARM_NOT_ACTIVE;
             }

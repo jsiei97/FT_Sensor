@@ -324,14 +324,34 @@ void TestTemperatureSensor::test_AlarmLow()
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
 
-    //28 > 30-5 = no alarm
-    my_global_ds18b20 = 28.00;
+    //31 > 30 = no alarm
+    my_global_ds18b20 = 31.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
 
-    //22 < 30-5 = alarm
+    //22 < 30 = alarm
     my_global_ds18b20 = 22.00;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+    QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_LOW );
+    QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_LOW );
+    QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_LOW );
+
+    //31 < 30+5 = alarm
+    my_global_ds18b20 = 31.00;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+    QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_LOW );
+
+    //36 > 30+5 = alarm
+    my_global_ds18b20 = 36.00;
+    QVERIFY( sensor.getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+    QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
+
+    //29 < 30 = alarm
+    my_global_ds18b20 = 29.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_LOW );
@@ -370,14 +390,14 @@ void TestTemperatureSensor::test_AlarmHigh()
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
 
-    //32 < 30+5 = no alarm
-    my_global_ds18b20 = 32.00;
+    //29 < 30 = no alarm
+    my_global_ds18b20 = 29.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
 
-    //40 > 30+5 = alarm
-    my_global_ds18b20 = 40.00;
+    //31 > 30 = alarm
+    my_global_ds18b20 = 31.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_HIGH );
@@ -385,22 +405,22 @@ void TestTemperatureSensor::test_AlarmHigh()
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_HIGH );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_HIGH );
 
-    //32 < 30+5 = alarm since hyst!
-    my_global_ds18b20 = 32.00;
+    //29 > 30-5 = alarm since hyst!
+    my_global_ds18b20 = 29.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_HIGH );
 
-    //28 < 30-5 = no alarm
-    my_global_ds18b20 = 28.00;
+    //24 < 30-5 = no alarm
+    my_global_ds18b20 = 24.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
 
-    //40 > 30+5 = alarm
-    my_global_ds18b20 = 40.00;
+    //31 > 30 = alarm
+    my_global_ds18b20 = 31.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_HIGH );
@@ -413,14 +433,14 @@ void TestTemperatureSensor::test_AlarmHigh()
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
 
-    //20 < 30 = no alarm
+    //20 < 30-5 = no alarm
     my_global_ds18b20 = 20.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_NO );
 
-    //40 > 30+5 = alarm
-    my_global_ds18b20 = 40.00;
+    //31 > 30 = alarm
+    my_global_ds18b20 = 31.00;
     QVERIFY( sensor.getTemperature(&value) );
     QCOMPARE( value, my_global_ds18b20 );
     QCOMPARE( sensor.alarmCheck(), SENSOR_ALARM_HIGH );
@@ -479,15 +499,15 @@ void TestTemperatureSensor::test_AlarmAll()
                 foundAlarmHigh = true;
                 sensor.alarmAck(num);
                 break;
-            default :
-                qDebug() << __func__ << __LINE__ << "maxCnt" << maxCnt;
-                //QFAIL("There should not be any other...");
+            case SENSOR_ALARM_NO:
+                //no more alarms...
                 break;
         }
         maxCnt--;
     }
     while( num != SENSOR_ALARM_NO && maxCnt != 0);
 
+    QVERIFY( (maxCnt>0) );
 
     QVERIFY(foundAlarmSensor);
     QVERIFY(foundAlarmLow);
