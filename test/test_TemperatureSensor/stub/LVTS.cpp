@@ -4,7 +4,7 @@
 
 LVTS::LVTS(int pin, FT_SensorType type)
 {
-    qDebug() << __func__ << __LINE__ << "pin" << pin << type;
+    //qDebug() << __func__ << __LINE__ << "pin" << pin << type;
     this->pin = pin;
     this->type = type;
 }
@@ -14,7 +14,7 @@ double my_global_lm35 = 0;
 
 bool LVTS::getTemperature(double* value)
 {
-    qDebug() << __func__ << __LINE__;
+    //qDebug() << __func__ << __LINE__;
     switch ( this->type )
     {
         case SENSOR_LVTS_LM34:
@@ -33,19 +33,3 @@ bool LVTS::getTemperature(double* value)
     return true;
 }
 
-/*
-double LVTS::lm35(int reading, bool *ok)
-{
-    qDebug() << __func__ << __LINE__;
-}
-
-double LVTS::lm34(int reading, bool *ok)
-{
-    qDebug() << __func__ << __LINE__;
-}
-
-double LVTS::F2C(double degC)
-{
-    qDebug() << __func__ << __LINE__;
-}
-*/
