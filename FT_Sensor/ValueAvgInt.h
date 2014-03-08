@@ -24,14 +24,20 @@
 #ifndef  __VALUEAVG_H
 #define  __VALUEAVG_H
 
+/**
+ * A basic filter
+ *
+ * The filter will ignore the most extreme values, 
+ * and then calculate the average value on the rest.
+ */
 class ValueAvgInt
 {
     private:
-        bool firstTime;
-        int higest;
-        int smallest;
-        int sum;
-        int cnt;
+        bool firstTime; ///< Indicate first value
+        int higest;     ///< The biggest extreme value, it will not be used in the final calculation
+        int smallest;   ///< The smallest extreme value, it will not be used in the final calculation
+        int sum;        ///< The current sum of values
+        int cnt;        ///< How many values is sent into the filter
 
     public:
         ValueAvgInt();

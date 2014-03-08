@@ -25,6 +25,7 @@
 #define  __SENSORTYPES_H
 
 
+/// A enumeration of supported sensors
 typedef enum
 {
     SENSOR_NONE = 0,  ///< No sensor

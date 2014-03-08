@@ -26,6 +26,12 @@
 #include "ValueAvgInt.h"
 #include "SensorTypes.h"
 
+/**
+ * Init with IO pin and sensor type
+ *
+ * @param[in] pin is the IO pin
+ * @param[in] type is sensor type
+ */
 LVTS::LVTS(int pin, FT_SensorType type)
 {
     this->pin  = pin;
@@ -35,6 +41,12 @@ LVTS::LVTS(int pin, FT_SensorType type)
 }
 
 
+/**
+ * Get the current temperature from this sensor
+ *
+ * @param[out] value is the temperature retun value
+ * @return true if ok
+ */
 bool LVTS::getTemperature(double* value)
 {
     //Get some values
@@ -73,8 +85,8 @@ bool LVTS::getTemperature(double* value)
  *
  * analogReference(INTERNAL); should be used.
  *
- * @param reading from analogRead, (0..1023).
- * @param ok becomes true if ok, false if fail.
+ * @param[in] reading from analogRead, (0..1023).
+ * @param[out] ok becomes true if ok, false if fail.
  * @return temperature in degC
  */
 double LVTS::lm35(int reading, bool *ok)
@@ -104,8 +116,8 @@ double LVTS::lm35(int reading, bool *ok)
  *
  * analogReference(INTERNAL); should be used.
  *
- * @param reading from analogRead, (0..1023).
- * @param ok becomes true if ok, false if fail.
+ * @param[in] reading from analogRead, (0..1023).
+ * @param[out] ok becomes true if ok, false if fail.
  * @return temperature in degC
  */
 double LVTS::lm34(int reading, bool *ok)
@@ -134,7 +146,7 @@ double LVTS::lm34(int reading, bool *ok)
 /**
  * Convert Fahrenheit to Celcius
  *
- * @param degC value in Celcius
+ * @param[in] degC value in Celcius
  * @return value in Fahrenheit
  */
 double LVTS::F2C(double degC)

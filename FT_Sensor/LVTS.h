@@ -26,11 +26,17 @@
 
 #include "SensorTypes.h"
 
+/**
+ * Low Voltage Temperature Sensor Class
+ *
+ * This is a wrapper class for analog low voltage temperature sensors
+ * like the LM35 and LM34.
+ */
 class LVTS
 {
     private:
-        int pin;
-        FT_SensorType type;
+        int pin;            ///< What IO pin is this sensor using?
+        FT_SensorType type; ///< What sensor type is this, i.e. LM35
 
         static double lm34(int reading, bool *ok);
         static double lm35(int reading, bool *ok);

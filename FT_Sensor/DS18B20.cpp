@@ -25,6 +25,11 @@
 #include "DS18B20.h"
 #include "OneWire.h"
 
+/**
+ * Init with what pin the sensor is connected to.
+ *
+ * @param[in] pin is the IO pin
+ */
 DS18B20::DS18B20(int pin)
 {
     this->pin  = pin;

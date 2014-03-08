@@ -25,10 +25,11 @@
 #define  __DS18B20_H
 
 
+/// OneWire DS18B20 Temperature Sensor Class
 class DS18B20
 {
     private:
-        int pin;
+        int pin; ///< What IO pin is this sensor using?
 
     public:
         DS18B20(int pin);
