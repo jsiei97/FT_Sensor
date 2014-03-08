@@ -51,7 +51,7 @@ typedef enum
 
 
 /**
- * A Temperature sensor class for the DS18B20 and LVTS (i.e. LM35).
+ * A Temperature sensor class for the DS18B20 and LVTS.
  *
  * This will class will wrap the different sensors and give them the
  * same interface so they can be put in a array and just looped from main.
