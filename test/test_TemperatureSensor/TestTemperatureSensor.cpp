@@ -566,6 +566,25 @@ void TestTemperatureSensor::test_Alarm()
 
     QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_NO);
     QCOMPARE( sensor[1].alarmCheck(), SENSOR_ALARM_NO);
+
+    //Then check that we dont get any alarm when they are inactived.
+    sensor[0].setAlarmLevels(1.0, false, 20.0, false, 25.0);
+
+    my_global_ds18b20 = 10.00;
+    QVERIFY( sensor[0].getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_NO);
+
+    my_global_ds18b20 = 23.00;
+    QVERIFY( sensor[0].getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_NO);
+
+    my_global_ds18b20 = 30.00;
+    QVERIFY( sensor[0].getTemperature(&value) );
+    QCOMPARE( value, my_global_ds18b20 );
+    QCOMPARE( sensor[0].alarmCheck(), SENSOR_ALARM_NO);
+
 }
 
 QTEST_MAIN(TestTemperatureSensor)

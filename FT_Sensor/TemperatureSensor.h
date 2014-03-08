@@ -30,6 +30,7 @@
 #include "SensorTypes.h"
 
 
+/// A list with the different alarms
 typedef enum
 {
     SENSOR_ALARM_NO = 0, ///< No active alarm
@@ -138,8 +139,13 @@ class TemperatureSensor
         AlarmStates alarmLow;    ///< Current state for the low level alarm.
         AlarmStates alarmHigh;   ///< Current state for the high level alarm.
 
-        bool alarmLowActive;
-        bool alarmHighActive;
+        bool alarmLowActive;  ///< Is Alarm Low activated?
+        bool alarmHighActive; ///< Is Alarm High activated?
+
+        unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
+        double alarmHyst;     ///< Hysteresis used to reset the alarm levels
+        double alarmHighLevel;///< Alarm level for the high value alarm
+        double alarmLowLevel; ///< Alarm level for the low value alarm
 
         //Variables for the value
         double valueWork;   ///< Active value that we work with right now
@@ -149,11 +155,6 @@ class TemperatureSensor
         int    valueSendMax;///< Always send after "cnt time" even if there is no change, the max value.
 
         double valueOffset; ///< Offset calibration value, this will just be added to the messured value
-
-        unsigned int failcnt; ///< If sensor read fails, then this value inc. Zero is ok.
-        double alarmHyst;
-        double alarmHighLevel;
-        double alarmLowLevel;
 
     public:
         TemperatureSensor();
