@@ -66,6 +66,14 @@ TemperatureSensor::~TemperatureSensor()
         delete lvts;
 }
 
+/**
+ * Init this object
+ *
+ * This must only be called once!
+ *
+ * @param[in] pin is IO pin
+ * @param[in] type is sensor type i.e. DS18B20 or LM35.
+ */
 void TemperatureSensor::init(int pin, FT_SensorType type)
 {
     this->type=type;
@@ -154,6 +162,12 @@ void TemperatureSensor::setValueOffset(double offset)
     valueOffset = offset;
 }
 
+/**
+ * Get the current temperature from this sensor
+ *
+ * @param[out] value is the temperature return value
+ * @return true if ok
+ */
 bool TemperatureSensor::getTemperature(double* value)
 {
     bool ret = false;

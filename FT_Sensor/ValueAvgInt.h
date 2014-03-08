@@ -29,6 +29,10 @@
  *
  * The filter will ignore the most extreme values, 
  * and then calculate the average value on the rest.
+ *
+ * The usage is first to call init(), 
+ * then add some 10-20 values with addValue(int).
+ * And the result can be colleced with getValue().
  */
 class ValueAvgInt
 {

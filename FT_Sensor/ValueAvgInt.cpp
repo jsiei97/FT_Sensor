@@ -28,6 +28,9 @@ ValueAvgInt::ValueAvgInt()
     init();
 }
 
+/**
+ * Reset and init this filter to start over with a new session.
+ */
 void ValueAvgInt::init()
 {
     firstTime = true;
@@ -37,6 +40,11 @@ void ValueAvgInt::init()
     cnt = 0;
 }
 
+/**
+ * Add a new value to the filter
+ *
+ * @param[in] data is some data to be used int the filter
+ */
 void ValueAvgInt::addValue(int data)
 {
     sum += data;
@@ -61,6 +69,11 @@ void ValueAvgInt::addValue(int data)
     firstTime = false;
 }
 
+/**
+ * Get the result from the filter.
+ *
+ * @return the calculated value
+ */
 int ValueAvgInt::getValue()
 {
     if(cnt == 0)

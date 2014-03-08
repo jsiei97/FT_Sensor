@@ -44,7 +44,7 @@ LVTS::LVTS(int pin, FT_SensorType type)
 /**
  * Get the current temperature from this sensor
  *
- * @param[out] value is the temperature retun value
+ * @param[out] value is the temperature return value
  * @return true if ok
  */
 bool LVTS::getTemperature(double* value)
