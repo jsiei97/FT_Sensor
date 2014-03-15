@@ -275,6 +275,14 @@ SensorAlarmNumber TemperatureSensor::alarmCheck()
     if(num!=SENSOR_ALARM_NO)
         return num;
 
+    if(failcnt !=0)
+    {
+        //We don't have a correct reading at this moment, 
+        //so we cant check high/low level since we cant trust 
+        //the value we compare with...
+        return SENSOR_ALARM_NO;
+    }
+
     if(alarmLowActive)
     {
         //Then check the low value alarm.

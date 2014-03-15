@@ -23,7 +23,7 @@
 
 #include "DS18B20.h"
 
-DS18B20 ds(A0);
+DS18B20 ds(A1);
 
 void setup()
 {
