@@ -24,6 +24,7 @@
 #include "Arduino.h"
 #include "DS18B20.h"
 #include "OneWire.h"
+#include "DS18B20Helper.h"
 
 /**
  * Init with what pin the sensor is connected to.
@@ -66,12 +67,13 @@ bool DS18B20::getTemperature(double* value)
         return false;
     }
 
+    //1w adress
     /*
     Serial.print("ROM =");
     for( i = 0; i < 8; i++ )
     {
-        Serial.write(' ');
         Serial.print(addr[i], HEX);
+        Serial.write(' ');
     }
     */
 
@@ -84,10 +86,11 @@ bool DS18B20::getTemperature(double* value)
 
     // the first ROM byte indicates which chip
     switch(addr[0]) {
-        case 0x10:
+        /// @todo Add support for DS18S20, can't test right now
+        //case 0x10:
             //Serial.println("  Chip = DS18S20");  // or old DS1820
-            type_s = 1;
-            break;
+            //type_s = 1;
+            //break;
         case 0x28:
             //Serial.println("  Chip = DS18B20");
             type_s = 0;
@@ -103,7 +106,10 @@ bool DS18B20::getTemperature(double* value)
 
     ds.reset();
     ds.select(addr);
-    ds.write(0x44,0); // start conversion, with power on
+    // To  initiate  a  temperature  measurement
+    // and A-to-D conversion, the master must issue a Convert
+    // T [44h] command.
+    ds.write(0x44,0);
 
     // Please note that every conversion takes 750ms,
     // and if we don't wait we get the last value...
@@ -136,8 +142,12 @@ bool DS18B20::getTemperature(double* value)
     //Serial.println();
 
     // convert the data to actual temperature
+    uint16_t raw = (data[1] << 8) | data[0];
 
-    unsigned int raw = (data[1] << 8) | data[0];
+    Serial.print(" RAW=");
+    Serial.print(raw, HEX);
+    Serial.print(" ");
+
     if( type_s )
     {
         raw = raw << 3; // 9 bit resolution default
@@ -149,22 +159,34 @@ bool DS18B20::getTemperature(double* value)
     }
     else
     {
+        /// @todo Test if 9,10 and 11 bit resoltion works
         byte cfg = (data[4] & 0x60);
         if( cfg == 0x00 )
         {
-            raw = raw << 3;  // 9 bit resolution, 93.75 ms
+            // 9 bit resolution, 93.75 ms
+            //Serial.print(" 9 bit");
+            raw = raw & 0xFFF8;
         }
         else if( cfg == 0x20 )
         {
-            raw = raw << 2; // 10 bit res, 187.5 ms
+            // 10 bit res, 187.5 ms
+            //Serial.print("10 bit");
+            raw = raw & 0xFFFC;
         }
         else if( cfg == 0x40 )
         {
-            raw = raw << 1; // 11 bit res, 375 ms
+            // 11 bit res, 375 ms
+            //Serial.print("10 bit");
+            raw = raw & 0xFFFE;
         }
         // default is 12 bit resolution, 750 ms conversion time
     }
-    celsius = (float)raw / 16.0;
+
+    //Serial.print(" RAW=");
+    //Serial.print(raw, HEX);
+    //Serial.print(" ");
+
+    celsius = DS18B20Helper::convertTemperature(raw);
 
     //The internal DS18B20 error temperature,
     //dont return this value!
